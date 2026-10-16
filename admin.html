@@ -68,6 +68,7 @@ textarea{resize:vertical}
 .rep label{margin:0}.rep .full{grid-column:2/3}
 .rep .rm{border:0;background:none;color:var(--danger);cursor:pointer;font-size:22px;line-height:1}
 .rep.v{grid-template-columns:1fr auto}.rep.v .col{display:grid;gap:8px}
+.rep.st{grid-template-columns:110px 80px 1fr auto}
 .imgfield{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 .hero-prev{width:200px;height:112px;border-radius:12px;background:linear-gradient(135deg,#2b0a1e,#7b1150);background-size:cover;background-position:center;flex:none;border:1px solid var(--line)}
 .imgfield .btn{margin-inline-end:8px;margin-top:8px}
@@ -96,7 +97,7 @@ textarea{resize:vertical}
 
 @media (max-width:760px){
   .grid2,.grid3{grid-template-columns:1fr}
-  .rep{grid-template-columns:1fr}.rep .full{grid-column:auto}
+  .rep,.rep.st{grid-template-columns:1fr}.rep .full{grid-column:auto}
   .top{padding:10px 14px}.tabs{order:3;width:100%;overflow-x:auto}
   .prow .th{width:72px;height:56px}
 }
@@ -173,6 +174,12 @@ textarea{resize:vertical}
             <button class="btn btn-o" id="heroClear" type="button">إزالة الصورة</button>
           </div>
         </div>
+      </div>
+      <div class="panel">
+        <div class="pane-head sm"><h3>الإنجازات (الأرقام)</h3><button class="btn btn-o" data-add="stats">+ إضافة</button></div>
+        <label>عنوان صغير أعلى الأرقام<input data-path="statsTitle"></label>
+        <p class="muted">اكتب الرقم فقط (مثل 200) واترك الرمز + إن أردت «أكثر من». تظهر الأرقام تحت القسم الرئيسي بحركة عدّ تصاعدي.</p>
+        <div id="statsList"></div>
       </div>
       <div class="panel">
         <h3>من نحن</h3>
@@ -348,7 +355,7 @@ textarea{resize:vertical}
 
   /* ---------- app ---------- */
   function initApp() {
-    S.data.projects = S.data.projects || []; S.data.services = S.data.services || []; S.data.values = S.data.values || [];
+    S.data.projects = S.data.projects || []; S.data.services = S.data.services || []; S.data.values = S.data.values || []; S.data.stats = S.data.stats || [];
     $$('#tabs button').forEach(b => b.onclick = () => {
       $$('#tabs button').forEach(x => x.classList.toggle('on', x === b));
       $$('[data-pane]').forEach(p => p.hidden = p.dataset.pane !== b.dataset.tab);
@@ -360,10 +367,10 @@ textarea{resize:vertical}
     });
     $('#aboutParas').value = (S.data.about?.paragraphs || []).join('\n\n');
     $('#aboutParas').addEventListener('input', e => { (S.data.about = S.data.about || {}).paragraphs = e.target.value.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean); setDirty(true); });
-    renderList('values'); renderList('services'); renderProjects(); renderHero();
+    renderList('stats'); renderList('values'); renderList('services'); renderProjects(); renderHero();
     $$('[data-add]').forEach(b => b.onclick = () => {
       const k = b.dataset.add;
-      S.data[k].push(k === 'services' ? { icon: 'building', title: '', text: '' } : { title: '', text: '' });
+      S.data[k].push(k === 'stats' ? { value: '', suffix: '+', label: '' } : k === 'services' ? { icon: 'building', title: '', text: '' } : { title: '', text: '' });
       renderList(k); setDirty(true);
     });
     $('#addProject').onclick = () => openProject(null);
@@ -385,7 +392,13 @@ textarea{resize:vertical}
   /* قوائم قابلة للتكرار: الخدمات والمميزات */
   function renderList(k) {
     const box = $(`#${k}List`);
-    box.innerHTML = S.data[k].map((it, i) => k === 'services' ? `
+    box.innerHTML = S.data[k].map((it, i) => k === 'stats' ? `
+      <div class="rep st" data-i="${i}">
+        <label>الرقم<input data-f="value" inputmode="numeric" dir="ltr" value="${esc(it.value)}"></label>
+        <label>الرمز<input data-f="suffix" dir="ltr" value="${esc(it.suffix)}" placeholder="+"></label>
+        <label>الوصف<input data-f="label" value="${esc(it.label)}"></label>
+        <button class="rm" type="button" title="حذف">×</button>
+      </div>` : k === 'services' ? `
       <div class="rep" data-i="${i}">
         <label>الأيقونة<select data-f="icon">${Object.entries(ICON_OPTS).map(([v, l]) => `<option value="${v}"${it.icon === v ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
         <div><label>العنوان<input data-f="title" value="${esc(it.title)}"></label><label>الوصف<textarea rows="2" data-f="text">${esc(it.text)}</textarea></label></div>
