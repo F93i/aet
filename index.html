@@ -443,10 +443,12 @@ body.lock{overflow:hidden}
 
   /* ---------- stats ---------- */
   function renderStats(d) {
-    const list = (d.stats || []).filter(x => x && String(x.value).trim() && x.label);
+    const DEFAULT_STATS = [{ value: '200', suffix: '+', label: 'مشروع تم تنفيذه' }, { value: '130', suffix: '+', label: 'فيلا سكنية في مدينة جدة' }, { value: '65', suffix: '+', label: 'عمارة سكنية وتجارية في مدينة جدة' }, { value: '7', suffix: '+', label: 'فنادق في جدة ومكة' }];
+    const list = (Array.isArray(d.stats) ? d.stats : DEFAULT_STATS).filter(x => x && String(x.value).trim() && x.label);
     $('#stats').hidden = !list.length;
-    $('#statsTitle').textContent = d.statsTitle || '';
-    $('#statsTitle').hidden = !d.statsTitle;
+    const title = d.statsTitle === undefined ? 'إنجازات نفخر بها' : d.statsTitle;
+    $('#statsTitle').textContent = title || '';
+    $('#statsTitle').hidden = !title;
     $('#statsGrid').innerHTML = list.map(x => `<div class="stat"><b><span data-to="${esc(String(x.value).replace(/[^\d.]/g, ''))}">${esc(x.value)}</span>${esc(x.suffix || '')}</b><span>${esc(x.label)}</span></div>`).join('');
     const nums = $$('#statsGrid [data-to]');
     const run = () => nums.forEach(el => {

@@ -355,7 +355,7 @@ textarea{resize:vertical}
 
   /* ---------- app ---------- */
   function initApp() {
-    S.data.projects = S.data.projects || []; S.data.services = S.data.services || []; S.data.values = S.data.values || []; S.data.stats = S.data.stats || [];
+    S.data.projects = S.data.projects || []; S.data.services = S.data.services || []; S.data.values = S.data.values || []; if (!Array.isArray(S.data.stats)) { S.data.stats = [{ value: '200', suffix: '+', label: 'مشروع تم تنفيذه' }, { value: '130', suffix: '+', label: 'فيلا سكنية في مدينة جدة' }, { value: '65', suffix: '+', label: 'عمارة سكنية وتجارية في مدينة جدة' }, { value: '7', suffix: '+', label: 'فنادق في جدة ومكة' }]; setDirty(true); } if (S.data.statsTitle === undefined) { S.data.statsTitle = 'إنجازات نفخر بها'; setDirty(true); }
     $$('#tabs button').forEach(b => b.onclick = () => {
       $$('#tabs button').forEach(x => x.classList.toggle('on', x === b));
       $$('[data-pane]').forEach(p => p.hidden = p.dataset.pane !== b.dataset.tab);
