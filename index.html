@@ -9,7 +9,7 @@
 <meta property="og:title" content="أصول الإنشاء والتعمير">
 <meta property="og:description" content="مقاولات وتطوير عمراني بأعلى معايير الجودة والسلامة.">
 <meta property="og:type" content="website">
-<link rel="icon" href="images/logo.svg" type="image/svg">
+<link rel="icon" href="images/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Reem+Kufi:wght@500;600;700&display=swap" rel="stylesheet">
@@ -201,7 +201,7 @@ body.lock{overflow:hidden}
 
 <header class="nav" id="nav">
   <div class="wrap nav-in">
-    <a href="#top" class="brand"><img src="images/logo.png" alt="شعار أصول الإنشاء والتعمير"><span id="brandName">أصول الإنشاء والتعمير</span></a>
+    <a href="#top" class="brand"><img src="images/logo.svg" alt="شعار أصول الإنشاء والتعمير"><span id="brandName">أصول الإنشاء والتعمير</span></a>
     <nav class="links" id="links">
       <a href="#about">من نحن</a>
       <a href="#services">خدماتنا</a>
@@ -297,7 +297,7 @@ body.lock{overflow:hidden}
 
 <footer class="footer">
   <div class="wrap foot-in">
-    <div class="brand"><img src="images/logo.png" alt=""><span id="footName">أصول الإنشاء والتعمير</span></div>
+    <div class="brand"><img src="images/logo.svg" alt=""><span id="footName">أصول الإنشاء والتعمير</span></div>
     <p>© <span id="year"></span> جميع الحقوق محفوظة</p>
   </div>
 </footer>
@@ -439,7 +439,7 @@ body.lock{overflow:hidden}
     $('#projectsGrid').innerHTML = shown.map(p => {
       const imgs = (p.images || []).filter(safeUrl);
       return `<button class="card reveal" data-id="${esc(p.id)}">
-        <div class="thumb">${imgs[0] ? `<img class="cover" loading="lazy" src="${esc(imgs[0])}" alt="${esc(p.title)}">` : '<img class="ph" src="images/logo.png" alt="">'}
+        <div class="thumb">${imgs[0] ? `<img class="cover" loading="lazy" src="${esc(imgs[0])}" alt="${esc(p.title)}">` : '<img class="ph" src="images/logo.svg" alt="">'}
           <span class="badge ${p.status === 'منجز' ? 'done' : 'go'}">${esc(p.status)}</span>
           ${imgs.length > 1 ? `<span class="count">${imgs.length} صور</span>` : ''}</div>
         <div class="card-b"><h3>${esc(p.title)}</h3>
@@ -456,7 +456,7 @@ body.lock{overflow:hidden}
   function showImg(i) {
     const imgs = (cur.images || []).filter(safeUrl);
     const main = $('#mMain');
-    if (!imgs.length) { main.innerHTML = '<img class="ph" src="images/logo.png" alt="" style="position:static;height:auto;width:70px">'; $('#mThumbs').innerHTML = ''; return; }
+    if (!imgs.length) { main.innerHTML = '<img class="ph" src="images/logo.svg" alt="" style="position:static;height:auto;width:70px">'; $('#mThumbs').innerHTML = ''; return; }
     idx = (i + imgs.length) % imgs.length;
     main.innerHTML = `<img src="${esc(imgs[idx])}" alt="${esc(cur.title)}">` + (imgs.length > 1 ? '<button class="m-nav prev" aria-label="السابق">›</button><button class="m-nav next" aria-label="التالي">‹</button>' : '');
     const pv = $('.prev', main), nx = $('.next', main);

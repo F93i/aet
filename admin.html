@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>لوحة التحكم | أصول الإنشاء والتعمير</title>
-<link rel="icon" href="images/logo.png" type="image/png">
+<link rel="icon" href="images/logo.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Reem+Kufi:wght@600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
@@ -110,7 +110,7 @@ textarea{resize:vertical}
 <!-- تسجيل الدخول / الربط مع GitHub -->
 <section class="login" id="login">
   <form class="login-box" id="loginForm" autocomplete="off">
-    <img src="images/logo.png" alt="" >
+    <img src="images/logo.svg" alt="" >
     <h1>لوحة التحكم</h1>
     <p class="muted">اربط اللوحة بمستودع GitHub الخاص بالموقع لتحفظ التعديلات مباشرة.</p>
     <label>اسم الحساب أو المنظمة (Owner)<input id="fOwner" dir="ltr" required placeholder="my-account"></label>
@@ -134,7 +134,7 @@ textarea{resize:vertical}
 <!-- اللوحة -->
 <div class="app" id="app" hidden>
   <header class="top">
-    <div class="brand"><img src="images/logo.png" alt="" ><b>لوحة التحكم</b></div>
+    <div class="brand"><img src="images/logo.svg" alt="" ><b>لوحة التحكم</b></div>
     <nav class="tabs" id="tabs">
       <button data-tab="projects" class="on">المشاريع</button>
       <button data-tab="content">محتوى الصفحة</button>
@@ -408,7 +408,7 @@ textarea{resize:vertical}
     $('#plist').innerHTML = list.length ? list.map((p, i) => {
       const img = (p.images || [])[0];
       return `<div class="prow" data-i="${i}">
-        <div class="th">${img ? `<img src="${esc(S.previews[img] || img)}" alt="">` : '<img class="ph" src="images/logo.png" alt="">'}</div>
+        <div class="th">${img ? `<img src="${esc(S.previews[img] || img)}" alt="">` : '<img class="ph" src="images/logo.svg" alt="">'}</div>
         <div class="info"><b>${esc(p.title) || 'بدون اسم'}</b><span class="meta">${[p.city, p.type, p.year].filter(Boolean).map(esc).join(' · ')} · ${(p.images || []).length} صور${p.lat ? ' · 📍 له موقع' : ' · بدون موقع'}</span></div>
         <span class="pill ${p.status === 'منجز' ? 'done' : ''}">${esc(p.status)}</span>
         <div class="mv"><button data-mv="-1" title="للأعلى">▲</button><button data-mv="1" title="للأسفل">▼</button></div>
