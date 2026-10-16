@@ -70,6 +70,17 @@ h1,h2,h3,h4{font-family:var(--head);line-height:1.35;font-weight:600}
 .hero-strip b{display:block;font:700 30px var(--head)}
 .hero-strip span{font-size:14px;opacity:.8}
 
+/* stats */
+.stats{background:#fff;position:relative;z-index:2;margin-top:-1px;border-bottom:1px solid var(--line)}
+.stats-title{text-align:center;color:var(--brand);font-weight:600;font-size:14px;letter-spacing:.06em;padding-top:34px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);padding-block:10px 36px}
+.stat{text-align:center;padding:14px 18px;position:relative}
+.stat+.stat::before{content:"";position:absolute;inset-block:22% 22%;inset-inline-start:0;width:1px;background:var(--line)}
+.stat b{display:block;font:700 clamp(38px,4.6vw,58px)/1.15 var(--head);color:var(--brand);direction:ltr;unicode-bidi:isolate}
+.stat>span{display:block;color:#3b3138;font-weight:500;font-size:16px;line-height:1.6;max-width:20ch;margin-inline:auto}
+@media (max-width:980px){.stats-grid{grid-template-columns:repeat(2,1fr);row-gap:8px}.stat:nth-child(3)::before{display:none}}
+@media (max-width:480px){.stat>span{font-size:14px}.stat{padding-inline:8px}}
+
 /* sections */
 .sec{padding-block:96px}
 .sec-soft{background:var(--soft)}
@@ -225,7 +236,13 @@ body.lock{overflow:hidden}
         <a href="#contact" class="btn btn-ghost">تواصل معنا</a>
       </div>
     </div>
-    <div class="hero-strip wrap" id="heroStrip"></div>
+  </section>
+
+  <section class="stats" id="stats" hidden>
+    <div class="wrap">
+      <p class="stats-title" id="statsTitle"></p>
+      <div class="stats-grid" id="statsGrid"></div>
+    </div>
   </section>
 
   <section class="sec" id="about">
@@ -379,11 +396,7 @@ body.lock{overflow:hidden}
     const heroEl = $('#hero');
     if (safeUrl(h.image)) { heroEl.style.backgroundImage = `url("${h.image}")`; heroEl.classList.add('has-img'); }
     const projects = d.projects || [];
-    const done = projects.filter(p => p.status === 'منجز').length;
-    const going = projects.filter(p => p.status !== 'منجز').length;
-    const cities = new Set(projects.map(p => p.city).filter(Boolean)).size;
-    const stats = [[done, 'مشروع منجز'], [going, 'مشروع قيد التنفيذ'], [cities, 'مدن نعمل بها']].filter(s => s[0] > 0);
-    $('#heroStrip').innerHTML = stats.map(s => `<div><b>${s[0]}</b><span>${s[1]}</span></div>`).join('');
+    renderStats(d);
 
     /* about */
     const a = d.about || {};
@@ -425,6 +438,24 @@ body.lock{overflow:hidden}
       window.open(`${wa}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
     });
     observe();
+  }
+
+
+  /* ---------- stats ---------- */
+  function renderStats(d) {
+    const list = (d.stats || []).filter(x => x && String(x.value).trim() && x.label);
+    $('#stats').hidden = !list.length;
+    $('#statsTitle').textContent = d.statsTitle || '';
+    $('#statsTitle').hidden = !d.statsTitle;
+    $('#statsGrid').innerHTML = list.map(x => `<div class="stat"><b><span data-to="${esc(String(x.value).replace(/[^\d.]/g, ''))}">${esc(x.value)}</span>${esc(x.suffix || '')}</b><span>${esc(x.label)}</span></div>`).join('');
+    const nums = $$('#statsGrid [data-to]');
+    const run = () => nums.forEach(el => {
+      const to = parseFloat(el.dataset.to); if (!isFinite(to) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const t0 = performance.now(), dur = 1500;
+      const step = t => { const k = Math.min(1, (t - t0) / dur); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); else el.textContent = el.dataset.to; };
+      el.textContent = '0'; requestAnimationFrame(step);
+    });
+    if ('IntersectionObserver' in window) { const o = new IntersectionObserver(es => { if (es[0].isIntersecting) { run(); o.disconnect(); } }, { threshold: .3 }); o.observe($('#statsGrid')); }
   }
 
   /* ---------- projects ---------- */
