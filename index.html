@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أصول الإنشاء والتعمير | مقاولات وتطوير عمراني</title>
+<meta name="description" content="شركة مقاولات متخصصة في الحلول الإنشائية والتطوير العمراني وفق أعلى معايير الجودة والسلامة.">
+<meta name="theme-color" content="#7b1150">
+<meta property="og:title" content="أصول الإنشاء والتعمير">
+<meta property="og:description" content="مقاولات وتطوير عمراني بأعلى معايير الجودة والسلامة.">
+<meta property="og:type" content="website">
+<link rel="icon" href="images/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Reem+Kufi:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{
+  --brand:#7b1150; --brand-d:#4a0a2f; --brand-dd:#2b0a1e; --brand-l:#f3e6ee;
+  --ink:#1d1118; --grey:#6e6a70; --bg:#fff; --soft:#faf6f9; --line:#eadfe6;
+  --r:16px; --shadow:0 10px 30px rgba(74,10,47,.10);
+  --font:'IBM Plex Sans Arabic',system-ui,sans-serif; --head:'Reem Kufi','IBM Plex Sans Arabic',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:var(--font);color:var(--ink);background:var(--bg);line-height:1.8;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.wrap{width:min(1160px,100% - 40px);margin-inline:auto}
+h1,h2,h3,h4{font-family:var(--head);line-height:1.35;font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 26px;border-radius:999px;background:var(--brand);color:#fff;font:600 15px var(--font);border:0;cursor:pointer;transition:.25s}
+.btn:hover{background:var(--brand-d);transform:translateY(-2px)}
+.btn-sm{padding:9px 20px;font-size:14px}
+.btn-ghost{background:transparent;border:1.5px solid rgba(255,255,255,.55)}
+.btn-ghost:hover{background:#fff;color:var(--brand)}
+.btn-ghost-dark{background:transparent;color:var(--brand);border:1.5px solid var(--brand)}
+.btn-ghost-dark:hover{background:var(--brand);color:#fff}
+
+/* nav */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;transition:.3s;background:transparent;color:#fff}
+.nav.solid{background:rgba(255,255,255,.96);backdrop-filter:blur(10px);color:var(--ink);box-shadow:0 2px 20px rgba(0,0,0,.07)}
+.nav-in{display:flex;align-items:center;gap:28px;height:72px}
+.brand{display:flex;align-items:center;gap:10px;font:600 18px var(--head)}
+.brand img{height:46px;width:auto}
+.nav:not(.solid) .brand img{filter:brightness(0) invert(1)}
+.links{display:flex;gap:26px;margin-inline:auto;font-weight:500;font-size:15px}
+.links a{opacity:.85;transition:.2s}.links a:hover{opacity:1;color:var(--brand)}
+.nav:not(.solid) .links a:hover{color:#fff;text-decoration:underline}
+.burger{display:none;background:none;border:0;width:36px;height:36px;cursor:pointer;margin-inline-start:auto;position:relative}
+.burger span{position:absolute;inset-inline:7px;height:2px;background:currentColor;transition:.25s}
+.burger span:first-child{top:13px}.burger span:last-child{top:21px}
+
+/* hero */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:center;color:#fff;overflow:hidden;
+  background:linear-gradient(135deg,var(--brand-dd) 0%,var(--brand-d) 55%,var(--brand) 120%);background-size:cover;background-position:center}
+.hero.has-img::before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,rgba(43,10,30,.93),rgba(74,10,47,.72) 60%,rgba(123,17,80,.5))}
+.hero-bars{position:absolute;inset-block:0;inset-inline-start:0;width:46%;display:flex;align-items:flex-end;gap:3%;padding-inline:4%;opacity:.14;pointer-events:none}
+.hero-bars i{flex:1;background:#fff;border-radius:3px 3px 0 0}
+.hero-bars i:nth-child(1){height:38%}.hero-bars i:nth-child(2){height:62%}.hero-bars i:nth-child(3){height:48%}.hero-bars i:nth-child(4){height:80%}.hero-bars i:nth-child(5){height:56%}
+.hero.has-img .hero-bars{opacity:.08}
+.hero-in{position:relative;padding-block:130px 60px;max-width:1160px}
+.eyebrow{display:inline-block;font-size:14px;letter-spacing:.04em;padding:6px 16px;border:1px solid rgba(255,255,255,.35);border-radius:999px;margin-bottom:22px;background:rgba(255,255,255,.07)}
+.hero h1{font-size:clamp(38px,6.2vw,76px);max-width:14ch;margin-bottom:20px}
+.lead{font-size:clamp(16px,1.6vw,20px);max-width:56ch;opacity:.9;font-weight:300}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+.hero .btn:not(.btn-ghost){background:#fff;color:var(--brand)}
+.hero .btn:not(.btn-ghost):hover{background:var(--brand-l)}
+.hero-strip{position:relative;display:flex;gap:0;margin-bottom:40px;border-top:1px solid rgba(255,255,255,.2);padding-top:22px;flex-wrap:wrap}
+.hero-strip div{flex:1;min-width:150px;padding-inline-end:20px}
+.hero-strip b{display:block;font:700 30px var(--head)}
+.hero-strip span{font-size:14px;opacity:.8}
+
+/* sections */
+.sec{padding-block:96px}
+.sec-soft{background:var(--soft)}
+.sec-dark{background:linear-gradient(135deg,var(--brand-dd),var(--brand-d));color:#fff}
+.kicker{color:var(--brand);font-weight:600;font-size:14px;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:34px;height:2px;background:currentColor}
+.sec h2{font-size:clamp(30px,4vw,46px);margin-bottom:16px}
+.sub{color:var(--grey);max-width:60ch;font-size:17px}
+.sec-head{margin-bottom:44px}
+.prose p{margin-bottom:14px;color:#3b3138;font-size:17px}
+.about-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:64px;align-items:start}
+.values{display:grid;gap:16px}
+.value{display:flex;gap:18px;padding:22px 24px;border:1px solid var(--line);border-radius:var(--r);background:#fff;transition:.3s}
+.value:hover{box-shadow:var(--shadow);transform:translateY(-3px)}
+.value .n{flex:none;width:46px;height:46px;border-radius:12px;background:var(--brand);color:#fff;display:grid;place-items:center;font:600 20px var(--head)}
+.value h3{font-size:19px;margin-bottom:2px}.value p{color:var(--grey);font-size:15px;line-height:1.7}
+
+.mv-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.mv-card{padding:40px;border:1px solid rgba(255,255,255,.16);border-radius:24px;background:rgba(255,255,255,.05);position:relative;overflow:hidden}
+.mv-card::after{content:"";position:absolute;inset-block-start:0;inset-inline-start:0;width:6px;height:100%;background:linear-gradient(var(--brand),#c0508a)}
+.mv-card h3{font-size:30px;margin-bottom:14px}
+.mv-card p{opacity:.88;font-size:17px}
+.mv-card .close{margin-top:18px;padding-top:18px;border-top:1px solid rgba(255,255,255,.18);font-weight:500;opacity:1}
+
+.services{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.svc{padding:30px 26px;border:1px solid var(--line);border-radius:var(--r);background:#fff;transition:.3s;position:relative;overflow:hidden}
+.svc::before{content:"";position:absolute;inset-inline:0;top:0;height:3px;background:var(--brand);transform:scaleX(0);transform-origin:right;transition:.35s}
+.svc:hover{box-shadow:var(--shadow);transform:translateY(-4px)}.svc:hover::before{transform:scaleX(1)}
+.svc .ic{width:56px;height:56px;border-radius:14px;background:var(--brand-l);color:var(--brand);display:grid;place-items:center;margin-bottom:18px}
+.svc h3{font-size:20px;margin-bottom:8px}.svc p{color:var(--grey);font-size:15px;line-height:1.8}
+
+/* projects */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px}
+.chip{padding:8px 20px;border-radius:999px;border:1px solid var(--line);background:#fff;font:500 14px var(--font);cursor:pointer;transition:.2s}
+.chip:hover{border-color:var(--brand);color:var(--brand)}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.projects{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:.3s;display:flex;flex-direction:column;text-align:start;font:inherit;color:inherit;padding:0}
+.card:hover{box-shadow:var(--shadow);transform:translateY(-5px)}
+.thumb{aspect-ratio:4/3;background:linear-gradient(135deg,var(--brand-d),var(--brand));position:relative;overflow:hidden;display:grid;place-items:center}
+.thumb img.cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:.5s}
+.card:hover .thumb img.cover{transform:scale(1.06)}
+.thumb .ph{width:48px;opacity:.35;filter:brightness(0) invert(1)}
+.badge{display:inline-block;padding:3px 14px;border-radius:999px;font-size:13px;font-weight:600;background:var(--brand-l);color:var(--brand)}
+.badge.done{background:#e6f4ec;color:#1b6b3d}.badge.go{background:#fff2dc;color:#8a5a00}
+.thumb .badge{position:absolute;top:14px;inset-inline-start:14px;z-index:1;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.thumb .count{position:absolute;bottom:12px;inset-inline-end:12px;z-index:1;background:rgba(0,0,0,.55);color:#fff;font-size:12px;padding:2px 10px;border-radius:999px}
+.card-b{padding:20px 22px 22px}
+.card-b h3{font-size:19px;margin-bottom:6px}
+.meta{color:var(--grey);font-size:14px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.meta svg{vertical-align:-3px;margin-inline-end:3px}
+.more{margin-top:14px;color:var(--brand);font-weight:600;font-size:14px}
+.empty{text-align:center;color:var(--grey);padding:40px}
+
+/* contact */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.contact-list{list-style:none;margin:28px 0;display:grid;gap:14px}
+.contact-list a{display:flex;align-items:center;gap:14px;font-size:18px;font-weight:500}
+.contact-list .ic{width:46px;height:46px;border-radius:12px;background:var(--brand-l);color:var(--brand);display:grid;place-items:center;flex:none}
+.contact-list a:hover{color:var(--brand)}
+.contact-list bdi{direction:ltr;unicode-bidi:isolate}
+.socials{display:flex;gap:10px}
+.socials a{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--brand);transition:.25s}
+.socials a:hover{background:var(--brand);color:#fff;transform:translateY(-3px)}
+.form{background:var(--soft);border:1px solid var(--line);border-radius:24px;padding:32px;display:grid;gap:16px}
+.form label{display:grid;gap:6px;font-weight:500;font-size:14px}
+.form input,.form select,.form textarea{font:inherit;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);transition:.2s}
+.form input:focus,.form select:focus,.form textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(123,17,80,.12)}
+.form .invalid{border-color:#c0392b}
+.hint{font-size:13px;color:var(--grey);text-align:center}
+
+.footer{background:var(--brand-dd);color:#fff;padding-block:28px}
+.foot-in{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:14px}
+.footer .brand img{filter:brightness(0) invert(1)}
+.wa-float{position:fixed;bottom:22px;inset-inline-start:22px;width:56px;height:56px;border-radius:50%;background:#25d366;color:#fff;display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:40;transition:.25s}
+.wa-float:hover{transform:scale(1.08)}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}
+.modal[hidden]{display:none}
+.modal-bg{position:absolute;inset:0;background:rgba(20,5,14,.7);backdrop-filter:blur(4px)}
+.modal-box{position:relative;background:#fff;border-radius:24px;width:min(1100px,100%);max-height:92vh;overflow:auto;display:grid;grid-template-columns:1.15fr 1fr;animation:pop .3s ease}
+@keyframes pop{from{opacity:0;transform:translateY(20px) scale(.98)}}
+.modal-x{position:absolute;top:14px;inset-inline-end:14px;z-index:5;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.92);font-size:26px;line-height:1;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.m-gallery{background:#14050e;display:flex;flex-direction:column;min-height:360px}
+.m-main{flex:1;min-height:300px;position:relative;display:grid;place-items:center}
+.m-main img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.m-main .ph{width:70px;opacity:.3;filter:brightness(0) invert(1)}
+.m-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.9);cursor:pointer;font-size:20px;z-index:2}
+.m-nav.prev{inset-inline-end:12px}.m-nav.next{inset-inline-start:12px}
+.m-thumbs{display:flex;gap:8px;padding:10px;overflow-x:auto}
+.m-thumbs button{flex:none;width:76px;height:56px;border-radius:8px;overflow:hidden;border:2px solid transparent;padding:0;cursor:pointer;opacity:.6;background:none}
+.m-thumbs button.on{border-color:#fff;opacity:1}
+.m-thumbs img{width:100%;height:100%;object-fit:cover}
+.m-info{padding:36px 32px}
+.m-info h3{font-size:26px;margin:10px 0 6px}
+.m-meta{color:var(--grey);margin-bottom:14px;font-size:15px}
+.m-map h4{font-size:17px;margin:22px 0 10px}
+#mMap{height:230px;border-radius:14px;border:1px solid var(--line);z-index:0}
+.m-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.m-actions .btn{padding:10px 20px;font-size:14px}
+body.lock{overflow:hidden}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+@media (max-width:980px){
+  .services{grid-template-columns:repeat(2,1fr)}
+  .projects{grid-template-columns:repeat(2,1fr)}
+  .about-grid,.contact-grid,.mv-grid{grid-template-columns:1fr;gap:36px}
+  .modal-box{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .sec{padding-block:64px}
+  .burger{display:block}
+  .nav .btn-sm{display:none}
+  .links{position:absolute;top:72px;inset-inline:0;flex-direction:column;gap:0;background:#fff;color:var(--ink);padding:8px 20px 16px;box-shadow:0 14px 24px rgba(0,0,0,.1);display:none}
+  .links.open{display:flex}.links a{padding:12px 0;border-bottom:1px solid var(--line)}
+  .services,.projects{grid-template-columns:1fr}
+  .hero-bars{width:100%}
+  .m-info{padding:26px 20px}
+  .form{padding:22px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a href="#top" class="brand"><img src="images/logo.png" alt="شعار أصول الإنشاء والتعمير"><span id="brandName">أصول الإنشاء والتعمير</span></a>
+    <nav class="links" id="links">
+      <a href="#about">من نحن</a>
+      <a href="#services">خدماتنا</a>
+      <a href="#projects">مشاريعنا</a>
+      <a href="#contact">تواصل معنا</a>
+    </nav>
+    <a href="#contact" class="btn btn-sm">اطلب عرض سعر</a>
+    <button class="burger" id="burger" aria-label="القائمة"><span></span><span></span></button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" id="hero">
+    <div class="hero-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="wrap hero-in">
+      <p class="eyebrow" id="heroEyebrow"></p>
+      <h1 id="heroTitle"></h1>
+      <p class="lead" id="heroSub"></p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn">شاهد مشاريعنا</a>
+        <a href="#contact" class="btn btn-ghost">تواصل معنا</a>
+      </div>
+    </div>
+    <div class="hero-strip wrap" id="heroStrip"></div>
+  </section>
+
+  <section class="sec" id="about">
+    <div class="wrap about-grid">
+      <div class="reveal">
+        <p class="kicker">من نحن</p>
+        <h2 id="aboutTitle"></h2>
+        <div id="aboutText" class="prose"></div>
+      </div>
+      <div class="values reveal" id="values"></div>
+    </div>
+  </section>
+
+  <section class="sec sec-dark" id="mv">
+    <div class="wrap mv-grid">
+      <article class="mv-card reveal" id="missionCard"></article>
+      <article class="mv-card reveal" id="visionCard"></article>
+    </div>
+  </section>
+
+  <section class="sec" id="services">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="kicker">ماذا نقدم</p>
+        <h2>خدماتنا</h2>
+        <p class="sub" id="servicesIntro"></p>
+      </div>
+      <div class="services" id="servicesGrid"></div>
+    </div>
+  </section>
+
+  <section class="sec sec-soft" id="projects">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="kicker">سجل أعمالنا</p>
+        <h2>مشاريعنا</h2>
+        <p class="sub" id="projectsIntro"></p>
+      </div>
+      <div class="filters" id="filters"></div>
+      <div class="projects" id="projectsGrid"></div>
+      <p class="empty" id="projectsEmpty" hidden>لا توجد مشاريع في هذا التصنيف حاليًا.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="contact">
+    <div class="wrap contact-grid">
+      <div class="reveal">
+        <p class="kicker">ابدأ مشروعك</p>
+        <h2 id="contactTitle"></h2>
+        <p class="sub" id="contactText"></p>
+        <ul class="contact-list" id="contactList"></ul>
+        <div class="socials" id="socials"></div>
+      </div>
+      <form class="form reveal" id="form" novalidate>
+        <label>الاسم<input name="name" required autocomplete="name"></label>
+        <label>رقم الجوال<input name="phone" type="tel" inputmode="tel" required autocomplete="tel"></label>
+        <label>نوع المشروع
+          <select name="type">
+            <option>مبنى سكني</option><option>مبنى تجاري</option><option>بنية تحتية</option><option>تشطيبات</option><option>أخرى</option>
+          </select>
+        </label>
+        <label>تفاصيل المشروع<textarea name="msg" rows="4"></textarea></label>
+        <button class="btn" type="submit">إرسال عبر واتساب</button>
+        <p class="hint">سيتم فتح واتساب برسالة جاهزة لإرسالها إلى الشركة.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap foot-in">
+    <div class="brand"><img src="images/logo.png" alt=""><span id="footName">أصول الإنشاء والتعمير</span></div>
+    <p>© <span id="year"></span> جميع الحقوق محفوظة</p>
+  </div>
+</footer>
+
+<a class="wa-float" id="waFloat" href="#" target="_blank" rel="noopener" aria-label="واتساب">
+  <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.3.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.5 1.9 1 .9 1.9 1.2 2.2 1.3.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l2 .9c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
+</a>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-bg" data-close></div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <button class="modal-x" data-close aria-label="إغلاق">×</button>
+    <div class="m-gallery">
+      <div class="m-main" id="mMain"></div>
+      <div class="m-thumbs" id="mThumbs"></div>
+    </div>
+    <div class="m-info">
+      <span class="badge" id="mStatus"></span>
+      <h3 id="mTitle"></h3>
+      <p class="m-meta" id="mMeta"></p>
+      <p id="mDesc" class="prose"></p>
+      <div class="m-map" id="mMapWrap">
+        <h4>موقع المشروع</h4>
+        <div id="mMap"></div>
+        <div class="m-actions">
+          <a class="btn" id="mOpen" target="_blank" rel="noopener">افتح الموقع في خرائط Google</a>
+          <a class="btn btn-ghost-dark" id="mRoute" target="_blank" rel="noopener">اتجاهات الوصول</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const safeUrl = u => /^(https?:|tel:|mailto:|images\/|\.\/|\/)/i.test(u || '') ? u : '';
+  const digits = s => String(s || '').replace(/\D/g, '');
+  const intl = p => { const d = digits(p); return d.startsWith('966') ? d : '966' + d.replace(/^0/, ''); };
+
+  const ICONS = {
+    building: '<path d="M4 21V7l8-4 8 4v14M9 21v-5h6v5M8 10h2M14 10h2M8 13h2M14 13h2"/>',
+    road: '<path d="M8 3 4 21M16 3l4 18M12 4v3M12 11v3M12 18v3"/>',
+    paint: '<rect x="3" y="3" width="14" height="6" rx="1.5"/><path d="M17 6h3v5h-8v4M12 15v6"/>',
+    clipboard: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11l2 2 4-4M9 17h6"/>',
+    crane: '<path d="M4 21V4h3l12 5M7 4v17M19 9v4M3 21h8M19 13v1"/>',
+    shield: '<path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3ZM9 12l2 2 4-4"/>'
+  };
+  const svg = (name, size = 26) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ICONS.building}</svg>`;
+  const pin = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+  const ICON_SOCIAL = {
+    snapchat: '<path d="M12 3c2.6 0 4.3 1.9 4.3 4.5v1.6c.4.2.9.2 1.2.1.6-.2 1 .6.4 1-.5.4-1.2.5-1.4.9-.1.3.4.9 1.1 1.5.5.5 1.2.8 1.7.9.4.1.4.6 0 .8-.6.3-1.4.4-1.6.7-.2.4-.1 1-.6 1.1-.7.1-1.2-.2-2 .1-.9.3-1.5 1.7-3.1 1.7s-2.2-1.4-3.1-1.7c-.8-.3-1.3 0-2-.1-.5-.1-.4-.7-.6-1.1-.2-.3-1-.4-1.6-.7-.4-.2-.4-.7 0-.8.5-.1 1.2-.4 1.7-.9.7-.6 1.2-1.2 1.1-1.5-.2-.4-.9-.5-1.4-.9-.6-.4-.2-1.2.4-1 .3.1.8.1 1.2-.1V7.5C7.7 4.9 9.4 3 12 3Z"/>',
+    x: '<path d="M4 4l16 16M20 4 4 20"/>',
+    instagram: '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".6" fill="currentColor"/>',
+    tiktok: '<path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.3 2.4 1.9 4 4.5 4.2"/>'
+  };
+
+  /* ---------- load ---------- */
+  fetch('data/content.json?v=' + Date.now())
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(render)
+    .catch(e => { console.error(e); document.body.insertAdjacentHTML('afterbegin', '<p style="padding:14px;background:#fff3cd;text-align:center">تعذّر تحميل بيانات الموقع. تأكد من رفع الملف data/content.json وتشغيل الموقع عبر GitHub Pages أو خادم محلي.</p>'); });
+
+  function render(d) {
+    const c = d.company || {};
+    document.title = `${c.name} | مقاولات وتطوير عمراني`;
+    $('#brandName').textContent = $('#footName').textContent = c.name || '';
+    $('#year').textContent = new Date().getFullYear();
+
+    /* hero */
+    const h = d.hero || {};
+    $('#heroEyebrow').textContent = h.eyebrow || '';
+    $('#heroEyebrow').hidden = !h.eyebrow;
+    $('#heroTitle').textContent = h.title || '';
+    $('#heroSub').textContent = h.subtitle || '';
+    const heroEl = $('#hero');
+    if (safeUrl(h.image)) { heroEl.style.backgroundImage = `url("${h.image}")`; heroEl.classList.add('has-img'); }
+    const projects = d.projects || [];
+    const done = projects.filter(p => p.status === 'منجز').length;
+    const going = projects.filter(p => p.status !== 'منجز').length;
+    const cities = new Set(projects.map(p => p.city).filter(Boolean)).size;
+    const stats = [[done, 'مشروع منجز'], [going, 'مشروع قيد التنفيذ'], [cities, 'مدن نعمل بها']].filter(s => s[0] > 0);
+    $('#heroStrip').innerHTML = stats.map(s => `<div><b>${s[0]}</b><span>${s[1]}</span></div>`).join('');
+
+    /* about */
+    const a = d.about || {};
+    $('#aboutTitle').textContent = a.title || 'نبذة عنّا';
+    $('#aboutText').innerHTML = (a.paragraphs || []).map(p => `<p>${esc(p)}</p>`).join('');
+    $('#values').innerHTML = (d.values || []).map((v, i) => `<div class="value"><div class="n">${i + 1}</div><div><h3>${esc(v.title)}</h3><p>${esc(v.text)}</p></div></div>`).join('');
+
+    /* mission / vision */
+    const mv = (el, o) => { el.innerHTML = `<h3>${esc(o.title)}</h3><p>${esc(o.text)}</p>${o.closing ? `<p class="close">${esc(o.closing)}</p>` : ''}`; };
+    mv($('#missionCard'), d.mission || {}); mv($('#visionCard'), d.vision || {});
+
+    /* services */
+    $('#servicesIntro').textContent = d.servicesIntro || '';
+    $('#servicesGrid').innerHTML = (d.services || []).map(s => `<article class="svc reveal"><div class="ic">${svg(s.icon)}</div><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></article>`).join('');
+
+    /* projects */
+    $('#projectsIntro').textContent = d.projectsIntro || '';
+    renderProjects(projects);
+
+    /* contact */
+    const ct = d.contact || {};
+    $('#contactTitle').textContent = ct.title || 'تواصل معنا';
+    $('#contactText').textContent = ct.text || '';
+    const phoneI = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>';
+    const mailI = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>';
+    $('#contactList').innerHTML =
+      (c.phone ? `<li><a href="tel:+${intl(c.phone)}"><span class="ic">${phoneI}</span><bdi>${esc(c.phone.replace(/^(\d{3})(\d{4})(\d{3})$/, '$1 $2 $3'))}</bdi></a></li>` : '') +
+      (c.email ? `<li><a href="mailto:${esc(c.email)}"><span class="ic">${mailI}</span><bdi>${esc(c.email)}</bdi></a></li>` : '');
+    $('#socials').innerHTML = ['snapchat', 'x', 'instagram', 'tiktok'].filter(k => safeUrl(c[k])).map(k =>
+      `<a href="${esc(c[k])}" target="_blank" rel="noopener" aria-label="${k}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON_SOCIAL[k]}</svg></a>`).join('');
+    const wa = c.phone ? `https://wa.me/${intl(c.phone)}` : '#';
+    $('#waFloat').href = wa;
+    $('#form').addEventListener('submit', e => {
+      e.preventDefault();
+      const f = e.target; let ok = true;
+      ['name', 'phone'].forEach(n => { const el = f.elements[n]; const bad = !el.value.trim(); el.classList.toggle('invalid', bad); if (bad) ok = false; });
+      if (!ok) return;
+      const msg = `السلام عليكم، أنا ${f.name.value.trim()}\nجوالي: ${f.phone.value.trim()}\nنوع المشروع: ${f.type.value}\n${f.msg.value.trim()}`;
+      window.open(`${wa}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+    });
+    observe();
+  }
+
+  /* ---------- projects ---------- */
+  let ALL = [], FILTER = 'الكل';
+  function renderProjects(list) {
+    ALL = list;
+    const types = ['الكل', ...new Set(list.map(p => p.type).filter(Boolean))];
+    $('#filters').innerHTML = types.length > 2 ? types.map(t => `<button class="chip${t === FILTER ? ' on' : ''}" data-t="${esc(t)}">${esc(t)}</button>`).join('') : '';
+    $$('#filters .chip').forEach(b => b.onclick = () => { FILTER = b.dataset.t; renderProjects(ALL); });
+    const shown = list.filter(p => FILTER === 'الكل' || p.type === FILTER);
+    $('#projectsEmpty').hidden = shown.length > 0;
+    $('#projectsGrid').innerHTML = shown.map(p => {
+      const imgs = (p.images || []).filter(safeUrl);
+      return `<button class="card reveal" data-id="${esc(p.id)}">
+        <div class="thumb">${imgs[0] ? `<img class="cover" loading="lazy" src="${esc(imgs[0])}" alt="${esc(p.title)}">` : '<img class="ph" src="images/logo.png" alt="">'}
+          <span class="badge ${p.status === 'منجز' ? 'done' : 'go'}">${esc(p.status)}</span>
+          ${imgs.length > 1 ? `<span class="count">${imgs.length} صور</span>` : ''}</div>
+        <div class="card-b"><h3>${esc(p.title)}</h3>
+          <div class="meta">${p.city ? `<span>${pin}${esc(p.city)}</span>` : ''}${p.type ? `<span>${esc(p.type)}</span>` : ''}${p.year ? `<span>${esc(p.year)}</span>` : ''}</div>
+          <div class="more">عرض التفاصيل والموقع ←</div></div></button>`;
+    }).join('');
+    $$('#projectsGrid .card').forEach(b => b.onclick = () => openProject(ALL.find(p => p.id === b.dataset.id)));
+    observe();
+  }
+
+  /* ---------- modal ---------- */
+  let map, idx = 0, cur = null, lastFocus = null;
+  const modal = $('#modal');
+  function showImg(i) {
+    const imgs = (cur.images || []).filter(safeUrl);
+    const main = $('#mMain');
+    if (!imgs.length) { main.innerHTML = '<img class="ph" src="images/logo.png" alt="" style="position:static;height:auto;width:70px">'; $('#mThumbs').innerHTML = ''; return; }
+    idx = (i + imgs.length) % imgs.length;
+    main.innerHTML = `<img src="${esc(imgs[idx])}" alt="${esc(cur.title)}">` + (imgs.length > 1 ? '<button class="m-nav prev" aria-label="السابق">›</button><button class="m-nav next" aria-label="التالي">‹</button>' : '');
+    const pv = $('.prev', main), nx = $('.next', main);
+    if (pv) { pv.onclick = () => showImg(idx - 1); nx.onclick = () => showImg(idx + 1); }
+    $('#mThumbs').innerHTML = imgs.length > 1 ? imgs.map((u, k) => `<button class="${k === idx ? 'on' : ''}" data-k="${k}"><img src="${esc(u)}" alt=""></button>`).join('') : '';
+    $$('#mThumbs button').forEach(b => b.onclick = () => showImg(+b.dataset.k));
+  }
+  function openProject(p) {
+    if (!p) return;
+    cur = p; lastFocus = document.activeElement;
+    $('#mTitle').textContent = p.title;
+    const st = $('#mStatus'); st.textContent = p.status; st.className = 'badge ' + (p.status === 'منجز' ? 'done' : 'go');
+    $('#mMeta').textContent = [p.city, p.type, p.year].filter(Boolean).join(' · ');
+    $('#mDesc').innerHTML = (p.description || '').split(/\n+/).filter(Boolean).map(t => `<p>${esc(t)}</p>`).join('');
+    showImg(0);
+    const has = isFinite(parseFloat(p.lat)) && isFinite(parseFloat(p.lng));
+    $('#mMapWrap').hidden = !has && !p.mapsUrl;
+    modal.hidden = false; document.body.classList.add('lock');
+    if (has) {
+      const ll = [parseFloat(p.lat), parseFloat(p.lng)];
+      $('#mOpen').href = safeUrl(p.mapsUrl) || `https://www.google.com/maps?q=${ll[0]},${ll[1]}`;
+      $('#mRoute').href = `https://www.google.com/maps/dir/?api=1&destination=${ll[0]},${ll[1]}`;
+      $('#mRoute').hidden = false; $('#mMap').hidden = false;
+      if (map) { map.remove(); map = null; }
+      if (window.L) {
+        map = L.map('mMap', { scrollWheelZoom: false }).setView(ll, 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+        L.marker(ll).addTo(map);
+        setTimeout(() => map.invalidateSize(), 80);
+      }
+    } else {
+      $('#mOpen').href = safeUrl(p.mapsUrl); $('#mRoute').hidden = true; $('#mMap').hidden = true;
+    }
+    $('.modal-x', modal).focus();
+  }
+  function closeModal() {
+    modal.hidden = true; document.body.classList.remove('lock');
+    if (map) { map.remove(); map = null; }
+    if (lastFocus) lastFocus.focus();
+  }
+  modal.addEventListener('click', e => { if (e.target.closest('[data-close]')) closeModal(); });
+  document.addEventListener('keydown', e => {
+    if (modal.hidden) return;
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'ArrowLeft') showImg(idx + 1);
+    if (e.key === 'ArrowRight') showImg(idx - 1);
+  });
+
+  /* ---------- ui ---------- */
+  const nav = $('#nav');
+  const onScroll = () => nav.classList.toggle('solid', scrollY > 40);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  $('#burger').onclick = () => $('#links').classList.toggle('open');
+  $$('#links a').forEach(a => a.addEventListener('click', () => $('#links').classList.remove('open')));
+
+  let io;
+  function observe() {
+    if (!('IntersectionObserver' in window)) { $$('.reveal').forEach(e => e.classList.add('in')); return; }
+    io = io || new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
+    $$('.reveal:not(.in)').forEach(e => io.observe(e));
+  }
+})();
+
+</script>
+</body>
+</html>

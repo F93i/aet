@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>لوحة التحكم | أصول الإنشاء والتعمير</title>
+<link rel="icon" href="images/logo.png" type="image/png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Reem+Kufi:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{--brand:#7b1150;--brand-d:#4a0a2f;--brand-l:#f3e6ee;--ink:#1d1118;--grey:#6e6a70;--line:#e6dce3;--bg:#f6f2f5;--danger:#b3261e;--font:'IBM Plex Sans Arabic',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.7;font-size:15px}
+[hidden]{display:none!important}
+.muted{color:var(--grey);font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 20px;border-radius:10px;border:1.5px solid var(--brand);background:var(--brand);color:#fff;font:600 14px var(--font);cursor:pointer;transition:.2s;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--brand-d);border-color:var(--brand-d)}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn-o{background:#fff;color:var(--brand)}.btn-o:hover{background:var(--brand-l);color:var(--brand)}
+.btn-danger{background:#fff;color:var(--danger);border-color:var(--danger)}.btn-danger:hover{background:var(--danger);border-color:var(--danger);color:#fff}
+label{display:grid;gap:5px;font-weight:500;font-size:14px;margin-bottom:12px}
+label.file{display:inline-flex;margin:0}
+label.check{display:flex;align-items:center;gap:8px;font-weight:400}
+input,select,textarea{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(123,17,80,.12)}
+input[type=checkbox]{width:auto}
+textarea{resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:0 12px}
+
+.login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#2b0a1e,#7b1150)}
+.login-box{background:#fff;border-radius:22px;padding:34px;width:min(440px,100%);display:grid;gap:4px}
+.login-box img{margin:0 auto 6px}.login-box h1{text-align:center;font:600 26px 'Reem Kufi',var(--font)}
+.login-box .muted{text-align:center;margin-bottom:14px}
+.login-box .btn{margin-top:6px;padding:12px}
+.err{color:var(--danger);background:#fdecea;padding:8px 12px;border-radius:8px;font-size:13px;margin:4px 0}
+.help{margin-top:14px;font-size:13px;color:var(--grey)}.help summary{cursor:pointer;color:var(--brand);font-weight:600}
+.help ol{padding-inline-start:20px;margin-top:8px}
+
+.top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:20px;padding:10px 24px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-size:17px}
+.tabs{display:flex;gap:4px;margin-inline-end:auto}
+.tabs button{border:0;background:none;padding:9px 18px;border-radius:10px;font:500 15px var(--font);cursor:pointer;color:var(--grey)}
+.tabs button.on{background:var(--brand-l);color:var(--brand);font-weight:600}
+.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.dirty{color:#a35a00;font-size:13px;font-weight:600}
+.main{max-width:1080px;margin:28px auto;padding:0 20px 80px}
+.pane-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px}
+.pane-head h2{font-size:22px}.pane-head h2 small{color:var(--grey);font-weight:400;font-size:14px}
+.pane-head.sm{margin-bottom:10px}.pane-head h3{margin:0}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:18px}
+.panel h3{font-size:17px;margin-bottom:12px;color:var(--brand)}
+
+.plist{display:grid;gap:12px}
+.prow{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;transition:.2s}
+.prow:hover{border-color:var(--brand);box-shadow:0 6px 18px rgba(74,10,47,.08)}
+.prow .th{width:96px;height:72px;border-radius:10px;background:linear-gradient(135deg,var(--brand-d),var(--brand));flex:none;overflow:hidden;display:grid;place-items:center}
+.prow .th img{width:100%;height:100%;object-fit:cover}.prow .th img.ph{width:34px;height:auto;opacity:.4;filter:brightness(0) invert(1)}
+.prow .info{flex:1;min-width:0}.prow b{display:block}
+.prow .meta{color:var(--grey);font-size:13px}
+.pill{font-size:12px;padding:2px 12px;border-radius:999px;background:#fff2dc;color:#8a5a00;font-weight:600;white-space:nowrap}.pill.done{background:#e6f4ec;color:#1b6b3d}
+.prow .mv{display:flex;flex-direction:column}
+.prow .mv button{border:0;background:none;cursor:pointer;color:var(--grey);font-size:12px;padding:0 6px}.prow .mv button:hover{color:var(--brand)}
+.emptyp{text-align:center;padding:50px;background:#fff;border:1px dashed var(--line);border-radius:16px;color:var(--grey)}
+
+.rep{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;background:#fcfafb;display:grid;grid-template-columns:150px 1fr auto;gap:10px 12px;align-items:start}
+.rep label{margin:0}.rep .full{grid-column:2/3}
+.rep .rm{border:0;background:none;color:var(--danger);cursor:pointer;font-size:22px;line-height:1}
+.rep.v{grid-template-columns:1fr auto}.rep.v .col{display:grid;gap:8px}
+.imgfield{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.hero-prev{width:200px;height:112px;border-radius:12px;background:linear-gradient(135deg,#2b0a1e,#7b1150);background-size:cover;background-position:center;flex:none;border:1px solid var(--line)}
+.imgfield .btn{margin-inline-end:8px;margin-top:8px}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px}
+.modal-bg{position:absolute;inset:0;background:rgba(20,5,14,.6)}
+.modal-box{position:relative;background:#fff;border-radius:20px;width:min(820px,100%);max-height:94vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-box header{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid var(--line)}
+.modal-box header h3{font-size:19px}.x{border:0;background:none;font-size:28px;cursor:pointer;line-height:1}
+.modal-body{padding:20px 22px;overflow:auto;flex:1}
+.modal-body h4{margin:16px 0 8px}
+.modal-box footer{display:flex;gap:10px;padding:14px 22px;border-top:1px solid var(--line);background:#fcfafb;align-items:center}.sp{flex:1}
+.imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:12px}
+.im{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;border:2px solid var(--line);background:#eee}
+.im.cover{border-color:var(--brand)}
+.im img{width:100%;height:100%;object-fit:cover}
+.im .bar{position:absolute;inset-inline:0;bottom:0;display:flex;justify-content:space-between;padding:3px;background:linear-gradient(transparent,rgba(0,0,0,.7))}
+.im button{border:0;background:rgba(255,255,255,.9);border-radius:6px;font-size:12px;padding:1px 8px;cursor:pointer}
+.im .tag{position:absolute;top:4px;inset-inline-start:4px;background:var(--brand);color:#fff;font-size:11px;padding:0 8px;border-radius:6px}
+.im .new{position:absolute;top:4px;inset-inline-end:4px;background:#25a15b;color:#fff;font-size:11px;padding:0 8px;border-radius:6px}
+#p_map{height:300px;border-radius:12px;border:1px solid var(--line);margin:8px 0;z-index:0}
+.loc-tools{display:flex;gap:8px;margin-bottom:8px}.loc-tools input{flex:1}
+.toast{position:fixed;bottom:24px;inset-inline:0;margin:auto;width:max-content;max-width:92vw;background:#1d1118;color:#fff;padding:12px 22px;border-radius:12px;z-index:200;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.toast.bad{background:var(--danger)}.toast.ok{background:#1b6b3d}
+
+@media (max-width:760px){
+  .grid2,.grid3{grid-template-columns:1fr}
+  .rep{grid-template-columns:1fr}.rep .full{grid-column:auto}
+  .top{padding:10px 14px}.tabs{order:3;width:100%;overflow-x:auto}
+  .prow .th{width:72px;height:56px}
+}
+
+.brand img{height:38px;width:auto}.login-box img{height:80px;width:auto}
+
+</style>
+</head>
+<body>
+
+<!-- تسجيل الدخول / الربط مع GitHub -->
+<section class="login" id="login">
+  <form class="login-box" id="loginForm" autocomplete="off">
+    <img src="images/logo.png" alt="" >
+    <h1>لوحة التحكم</h1>
+    <p class="muted">اربط اللوحة بمستودع GitHub الخاص بالموقع لتحفظ التعديلات مباشرة.</p>
+    <label>اسم الحساب أو المنظمة (Owner)<input id="fOwner" dir="ltr" required placeholder="my-account"></label>
+    <label>اسم المستودع (Repository)<input id="fRepo" dir="ltr" required placeholder="aet-website"></label>
+    <label>الفرع (Branch)<input id="fBranch" dir="ltr" required value="main"></label>
+    <label>رمز الوصول (Fine-grained Token)<input id="fToken" dir="ltr" type="password" required placeholder="github_pat_..."></label>
+    <label class="check"><input type="checkbox" id="fRemember"> تذكّر البيانات على هذا الجهاز</label>
+    <p class="err" id="loginErr" hidden></p>
+    <button class="btn" type="submit">دخول</button>
+    <details class="help"><summary>كيف أحصل على رمز الوصول؟</summary>
+      <ol>
+        <li>GitHub ← Settings ← Developer settings ← Personal access tokens ← <b>Fine-grained tokens</b>.</li>
+        <li>اختر المستودع فقط (Only select repositories).</li>
+        <li>في Permissions ← Repository permissions اجعل <b>Contents</b> = Read and write.</li>
+        <li>انسخ الرمز والصقه هنا. لا تشاركه مع أحد.</li>
+      </ol>
+    </details>
+  </form>
+</section>
+
+<!-- اللوحة -->
+<div class="app" id="app" hidden>
+  <header class="top">
+    <div class="brand"><img src="images/logo.png" alt="" ><b>لوحة التحكم</b></div>
+    <nav class="tabs" id="tabs">
+      <button data-tab="projects" class="on">المشاريع</button>
+      <button data-tab="content">محتوى الصفحة</button>
+      <button data-tab="contact">التواصل</button>
+    </nav>
+    <div class="top-actions">
+      <span class="dirty" id="dirty" hidden>● تعديلات غير محفوظة</span>
+      <a class="btn btn-o" href="index.html" target="_blank" rel="noopener">عرض الموقع</a>
+      <button class="btn" id="saveBtn">حفظ ونشر</button>
+      <button class="btn btn-o" id="logout">خروج</button>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- المشاريع -->
+    <section data-pane="projects">
+      <div class="pane-head"><h2>المشاريع <small id="pCount"></small></h2><button class="btn" id="addProject">+ إضافة مشروع</button></div>
+      <div class="plist" id="plist"></div>
+    </section>
+
+    <!-- المحتوى -->
+    <section data-pane="content" hidden>
+      <div class="pane-head"><h2>محتوى صفحة الهبوط</h2></div>
+      <div class="panel">
+        <h3>القسم الرئيسي</h3>
+        <div class="grid2">
+          <label>العبارة الصغيرة أعلى العنوان<input data-path="hero.eyebrow"></label>
+          <label>العنوان الرئيسي<input data-path="hero.title"></label>
+        </div>
+        <label>الوصف<textarea rows="2" data-path="hero.subtitle"></textarea></label>
+        <div class="imgfield">
+          <div class="hero-prev" id="heroPrev"></div>
+          <div>
+            <p class="muted">صورة خلفية القسم الرئيسي (اختياري). يُفضّل صورة أفقية لمشروع من أعمالكم.</p>
+            <label class="btn btn-o file">رفع صورة<input type="file" accept="image/*" id="heroFile" hidden></label>
+            <button class="btn btn-o" id="heroClear" type="button">إزالة الصورة</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>من نحن</h3>
+        <label>العنوان<input data-path="about.title"></label>
+        <label>الفقرات (افصل بين كل فقرة وأخرى بسطر فارغ)<textarea rows="6" id="aboutParas"></textarea></label>
+      </div>
+      <div class="panel">
+        <h3>الرسالة والرؤية</h3>
+        <div class="grid2">
+          <div><label>عنوان الرسالة<input data-path="mission.title"></label>
+            <label>نص الرسالة<textarea rows="3" data-path="mission.text"></textarea></label>
+            <label>الجملة الختامية<textarea rows="2" data-path="mission.closing"></textarea></label></div>
+          <div><label>عنوان الرؤية<input data-path="vision.title"></label>
+            <label>نص الرؤية<textarea rows="3" data-path="vision.text"></textarea></label>
+            <label>الجملة الختامية<textarea rows="2" data-path="vision.closing"></textarea></label></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="pane-head sm"><h3>مميزاتنا (3 نقاط)</h3><button class="btn btn-o" data-add="values">+ إضافة</button></div>
+        <div id="valuesList"></div>
+      </div>
+      <div class="panel">
+        <div class="pane-head sm"><h3>الخدمات</h3><button class="btn btn-o" data-add="services">+ إضافة</button></div>
+        <label>سطر تعريفي أسفل عنوان الخدمات<input data-path="servicesIntro"></label>
+        <div id="servicesList"></div>
+      </div>
+      <div class="panel">
+        <h3>نصوص أقسام أخرى</h3>
+        <label>سطر تعريفي أسفل عنوان المشاريع<input data-path="projectsIntro"></label>
+        <div class="grid2">
+          <label>عنوان قسم التواصل<input data-path="contact.title"></label>
+          <label>نص قسم التواصل<input data-path="contact.text"></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- التواصل -->
+    <section data-pane="contact" hidden>
+      <div class="pane-head"><h2>بيانات التواصل</h2></div>
+      <div class="panel">
+        <div class="grid2">
+          <label>اسم الشركة<input data-path="company.name"></label>
+          <label>رقم الجوال / واتساب<input dir="ltr" data-path="company.phone" placeholder="0556666577"></label>
+          <label>البريد الإلكتروني<input dir="ltr" data-path="company.email"></label>
+          <label>اسم الحساب في المنصات<input dir="ltr" data-path="company.handle"></label>
+        </div>
+        <h3>روابط التواصل الاجتماعي</h3>
+        <div class="grid2">
+          <label>سناب شات<input dir="ltr" data-path="company.snapchat"></label>
+          <label>X (تويتر)<input dir="ltr" data-path="company.x"></label>
+          <label>إنستغرام<input dir="ltr" data-path="company.instagram"></label>
+          <label>تيك توك<input dir="ltr" data-path="company.tiktok"></label>
+        </div>
+        <p class="muted">اترك الحقل فارغًا لإخفاء الأيقونة من الموقع.</p>
+      </div>
+      <div class="panel">
+        <h3>نسخة احتياطية</h3>
+        <p class="muted">يمكنك تنزيل نسخة من بيانات الموقع في أي وقت.</p>
+        <button class="btn btn-o" id="exportBtn">تنزيل content.json</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- نافذة المشروع -->
+<div class="modal" id="pModal" hidden>
+  <div class="modal-bg" data-close></div>
+  <form class="modal-box" id="pForm">
+    <header><h3 id="pmTitle">مشروع</h3><button type="button" class="x" data-close aria-label="إغلاق">×</button></header>
+    <div class="modal-body">
+      <div class="grid2">
+        <label>اسم المشروع<input id="p_title" required></label>
+        <label>الحالة
+          <select id="p_status"><option>منجز</option><option>قيد التنفيذ</option></select></label>
+        <label>التصنيف<input id="p_type" list="typeList" placeholder="سكني / تجاري / بنية تحتية ..."></label>
+        <datalist id="typeList"><option>سكني</option><option>تجاري</option><option>بنية تحتية</option><option>تشطيبات</option></datalist>
+        <label>المدينة<input id="p_city"></label>
+        <label>السنة<input id="p_year" inputmode="numeric"></label>
+      </div>
+      <label>وصف المشروع<textarea id="p_desc" rows="4"></textarea></label>
+
+      <h4>الصور <small class="muted">(الصورة الأولى هي الغلاف)</small></h4>
+      <div class="imgs" id="p_imgs"></div>
+      <label class="btn btn-o file">+ إضافة صور<input type="file" accept="image/*" multiple id="p_files" hidden></label>
+
+      <h4>موقع المشروع</h4>
+      <div class="loc-tools">
+        <input id="p_search" placeholder="ابحث عن عنوان أو حي..." >
+        <button type="button" class="btn btn-o" id="p_searchBtn">بحث</button>
+      </div>
+      <div class="loc-tools">
+        <input id="p_link" dir="ltr" placeholder="الصق رابط Google Maps (يحتوي على إحداثيات)">
+        <button type="button" class="btn btn-o" id="p_linkBtn">استخراج</button>
+      </div>
+      <div id="p_map"></div>
+      <p class="muted">اضغط على الخريطة أو اسحب الدبوس لتحديد الموقع بدقة.</p>
+      <div class="grid3">
+        <label>خط العرض<input id="p_lat" dir="ltr" inputmode="decimal"></label>
+        <label>خط الطول<input id="p_lng" dir="ltr" inputmode="decimal"></label>
+        <label>رابط خرائط Google (اختياري)<input id="p_maps" dir="ltr" placeholder="https://maps.app.goo.gl/..."></label>
+      </div>
+    </div>
+    <footer>
+      <button type="button" class="btn btn-danger" id="p_delete">حذف المشروع</button>
+      <span class="sp"></span>
+      <button type="button" class="btn btn-o" data-close>إلغاء</button>
+      <button type="submit" class="btn">حفظ المشروع</button>
+    </footer>
+  </form>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const CONTENT_PATH = 'data/content.json';
+  const ICON_OPTS = { building: 'مبنى', road: 'طريق', paint: 'تشطيب', clipboard: 'إدارة مشاريع', crane: 'رافعة', shield: 'سلامة' };
+
+  const S = { cfg: null, data: null, sha: null, dirty: false, pending: new Set(), previews: {}, editing: null };
+
+  /* ---------- helpers ---------- */
+  function toast(msg, kind = '') {
+    const t = $('#toast'); t.textContent = msg; t.className = 'toast ' + kind; t.hidden = false;
+    clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, 4200);
+  }
+  const setDirty = v => { S.dirty = v; $('#dirty').hidden = !v; };
+  const getPath = (o, p) => p.split('.').reduce((a, k) => (a == null ? a : a[k]), o);
+  const setPath = (o, p, v) => { const ks = p.split('.'); const last = ks.pop(); const t = ks.reduce((a, k) => a[k] = a[k] || {}, o); t[last] = v; };
+  const b64utf8 = str => { const bytes = new TextEncoder().encode(str); let s = ''; bytes.forEach(b => s += String.fromCharCode(b)); return btoa(s); };
+  const unb64utf8 = b64 => { const s = atob(b64.replace(/\n/g, '')); const bytes = Uint8Array.from(s, c => c.charCodeAt(0)); return new TextDecoder().decode(bytes); };
+
+  async function gh(path, opts = {}) {
+    const { owner, repo, token } = S.cfg;
+    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}${opts.query || ''}`, {
+      method: opts.method || 'GET',
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' },
+      body: opts.body ? JSON.stringify(opts.body) : undefined
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) { const e = new Error(json.message || res.status); e.status = res.status; throw e; }
+    return json;
+  }
+  const errMsg = e => e.status === 401 ? 'رمز الوصول غير صحيح أو منتهي.' :
+    e.status === 403 ? 'لا تملك صلاحية الكتابة. تأكد أن الرمز يملك Contents: Read and write.' :
+    e.status === 404 ? 'لم يُعثر على المستودع أو الملف. تأكد من الاسم والفرع وصلاحيات الرمز.' :
+    e.status === 409 || e.status === 422 ? 'حدث تعارض مع نسخة أحدث. حدّث الصفحة وأعد المحاولة.' : e.message;
+
+  /* ---------- login ---------- */
+  const saved = (() => { try { return JSON.parse(localStorage.getItem('aet_admin') || 'null'); } catch { return null; } })();
+  if (saved) { $('#fOwner').value = saved.owner; $('#fRepo').value = saved.repo; $('#fBranch').value = saved.branch; $('#fToken').value = saved.token; $('#fRemember').checked = true; }
+  // يحاول استنتاج اسم الحساب والمستودع من رابط GitHub Pages
+  else if (location.hostname.endsWith('.github.io')) { $('#fOwner').value = location.hostname.split('.')[0]; $('#fRepo').value = location.pathname.split('/')[1] || ''; }
+
+  $('#loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const cfg = { owner: $('#fOwner').value.trim(), repo: $('#fRepo').value.trim(), branch: $('#fBranch').value.trim() || 'main', token: $('#fToken').value.trim() };
+    S.cfg = cfg; const err = $('#loginErr'); err.hidden = true;
+    const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'جارٍ التحقق...';
+    try {
+      const f = await gh(CONTENT_PATH, { query: `?ref=${encodeURIComponent(cfg.branch)}` });
+      S.data = JSON.parse(unb64utf8(f.content)); S.sha = f.sha;
+      if ($('#fRemember').checked) localStorage.setItem('aet_admin', JSON.stringify(cfg)); else localStorage.removeItem('aet_admin');
+      $('#login').hidden = true; $('#app').hidden = false; initApp();
+    } catch (ex) { err.textContent = errMsg(ex); err.hidden = false; }
+    btn.disabled = false; btn.textContent = 'دخول';
+  });
+  $('#logout').onclick = () => { if (S.dirty && !confirm('لديك تعديلات غير محفوظة. هل تريد الخروج؟')) return; localStorage.removeItem('aet_admin'); location.reload(); };
+  addEventListener('beforeunload', e => { if (S.dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+  /* ---------- app ---------- */
+  function initApp() {
+    S.data.projects = S.data.projects || []; S.data.services = S.data.services || []; S.data.values = S.data.values || [];
+    $$('#tabs button').forEach(b => b.onclick = () => {
+      $$('#tabs button').forEach(x => x.classList.toggle('on', x === b));
+      $$('[data-pane]').forEach(p => p.hidden = p.dataset.pane !== b.dataset.tab);
+    });
+    // ربط الحقول البسيطة
+    $$('[data-path]').forEach(el => {
+      el.value = getPath(S.data, el.dataset.path) ?? '';
+      el.addEventListener('input', () => { setPath(S.data, el.dataset.path, el.value); setDirty(true); });
+    });
+    $('#aboutParas').value = (S.data.about?.paragraphs || []).join('\n\n');
+    $('#aboutParas').addEventListener('input', e => { (S.data.about = S.data.about || {}).paragraphs = e.target.value.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean); setDirty(true); });
+    renderList('values'); renderList('services'); renderProjects(); renderHero();
+    $$('[data-add]').forEach(b => b.onclick = () => {
+      const k = b.dataset.add;
+      S.data[k].push(k === 'services' ? { icon: 'building', title: '', text: '' } : { title: '', text: '' });
+      renderList(k); setDirty(true);
+    });
+    $('#addProject').onclick = () => openProject(null);
+    $('#saveBtn').onclick = save;
+    $('#exportBtn').onclick = () => {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(S.data, null, 2)], { type: 'application/json' })); a.download = 'content.json'; a.click();
+    };
+    $('#heroFile').onchange = async e => {
+      const f = e.target.files[0]; if (!f) return;
+      const { dataUrl } = await compress(f, 2000);
+      const path = `images/hero-${Date.now()}.jpg`; stage(path, dataUrl); S.data.hero = S.data.hero || {}; S.data.hero.image = path; renderHero(); setDirty(true); e.target.value = '';
+    };
+    $('#heroClear').onclick = () => { (S.data.hero = S.data.hero || {}).image = ''; renderHero(); setDirty(true); };
+  }
+  function renderHero() {
+    const p = S.data.hero?.image; $('#heroPrev').style.backgroundImage = p ? `url("${S.previews[p] || p}")` : '';
+  }
+
+  /* قوائم قابلة للتكرار: الخدمات والمميزات */
+  function renderList(k) {
+    const box = $(`#${k}List`);
+    box.innerHTML = S.data[k].map((it, i) => k === 'services' ? `
+      <div class="rep" data-i="${i}">
+        <label>الأيقونة<select data-f="icon">${Object.entries(ICON_OPTS).map(([v, l]) => `<option value="${v}"${it.icon === v ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
+        <div><label>العنوان<input data-f="title" value="${esc(it.title)}"></label><label>الوصف<textarea rows="2" data-f="text">${esc(it.text)}</textarea></label></div>
+        <button class="rm" type="button" title="حذف">×</button>
+      </div>` : `
+      <div class="rep v" data-i="${i}">
+        <div class="col"><label>العنوان<input data-f="title" value="${esc(it.title)}"></label><label>الوصف<textarea rows="2" data-f="text">${esc(it.text)}</textarea></label></div>
+        <button class="rm" type="button" title="حذف">×</button>
+      </div>`).join('');
+    $$('.rep', box).forEach(r => {
+      const i = +r.dataset.i;
+      $$('[data-f]', r).forEach(el => el.addEventListener('input', () => { S.data[k][i][el.dataset.f] = el.value; setDirty(true); }));
+      $('.rm', r).onclick = () => { if (confirm('حذف هذا العنصر؟')) { S.data[k].splice(i, 1); renderList(k); setDirty(true); } };
+    });
+  }
+
+  /* ---------- projects list ---------- */
+  function renderProjects() {
+    const list = S.data.projects; $('#pCount').textContent = `(${list.length})`;
+    $('#plist').innerHTML = list.length ? list.map((p, i) => {
+      const img = (p.images || [])[0];
+      return `<div class="prow" data-i="${i}">
+        <div class="th">${img ? `<img src="${esc(S.previews[img] || img)}" alt="">` : '<img class="ph" src="images/logo.png" alt="">'}</div>
+        <div class="info"><b>${esc(p.title) || 'بدون اسم'}</b><span class="meta">${[p.city, p.type, p.year].filter(Boolean).map(esc).join(' · ')} · ${(p.images || []).length} صور${p.lat ? ' · 📍 له موقع' : ' · بدون موقع'}</span></div>
+        <span class="pill ${p.status === 'منجز' ? 'done' : ''}">${esc(p.status)}</span>
+        <div class="mv"><button data-mv="-1" title="للأعلى">▲</button><button data-mv="1" title="للأسفل">▼</button></div>
+      </div>`;
+    }).join('') : '<div class="emptyp">لا توجد مشاريع بعد. اضغط «إضافة مشروع» للبدء.</div>';
+    $$('.prow').forEach(r => {
+      const i = +r.dataset.i;
+      r.onclick = e => { if (e.target.closest('.mv')) return; openProject(i); };
+      $$('.mv button', r).forEach(b => b.onclick = () => { const j = i + +b.dataset.mv; if (j < 0 || j >= list.length) return; [list[i], list[j]] = [list[j], list[i]]; renderProjects(); setDirty(true); });
+    });
+  }
+
+  /* ---------- images ---------- */
+  function stage(path, dataUrl) { S.previews[path] = dataUrl; S.pending.add(path); }
+  function compress(file, max = 1600) {
+    return new Promise((res, rej) => {
+      const url = URL.createObjectURL(file); const img = new Image();
+      img.onload = () => {
+        const k = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        res({ dataUrl: c.toDataURL('image/jpeg', .82) });
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('تعذّر قراءة الصورة')); };
+      img.src = url;
+    });
+  }
+
+  /* ---------- project modal ---------- */
+  let draft = null, map = null, marker = null;
+  const pm = $('#pModal');
+  function openProject(i) {
+    S.editing = i;
+    draft = i == null ? { id: 'p' + Date.now(), title: '', type: '', city: '', year: String(new Date().getFullYear()), status: 'منجز', description: '', images: [], lat: '', lng: '', mapsUrl: '' } : JSON.parse(JSON.stringify(S.data.projects[i]));
+    $('#pmTitle').textContent = i == null ? 'إضافة مشروع' : 'تعديل المشروع';
+    $('#p_delete').hidden = i == null;
+    const f = { title: 'p_title', status: 'p_status', type: 'p_type', city: 'p_city', year: 'p_year', description: 'p_desc', lat: 'p_lat', lng: 'p_lng', mapsUrl: 'p_maps' };
+    Object.entries(f).forEach(([k, id]) => $('#' + id).value = draft[k] ?? '');
+    $('#p_link').value = ''; $('#p_search').value = '';
+    renderImgs(); pm.hidden = false; document.body.style.overflow = 'hidden';
+    setTimeout(initMap, 60);
+  }
+  function closeProject() { pm.hidden = true; document.body.style.overflow = ''; if (map) { map.remove(); map = null; marker = null; } }
+  pm.addEventListener('click', e => { if (e.target.closest('[data-close]')) closeProject(); });
+
+  function renderImgs() {
+    $('#p_imgs').innerHTML = draft.images.map((p, i) => `<div class="im${i === 0 ? ' cover' : ''}" data-i="${i}">
+      <img src="${esc(S.previews[p] || p)}" alt="">${i === 0 ? '<span class="tag">الغلاف</span>' : ''}${S.pending.has(p) ? '<span class="new">جديدة</span>' : ''}
+      <div class="bar"><button type="button" data-a="cover">غلاف</button><button type="button" data-a="del">حذف</button></div></div>`).join('');
+    $$('#p_imgs .im').forEach(el => {
+      const i = +el.dataset.i;
+      $('[data-a=cover]', el).onclick = () => { const [x] = draft.images.splice(i, 1); draft.images.unshift(x); renderImgs(); };
+      $('[data-a=del]', el).onclick = () => { draft.images.splice(i, 1); renderImgs(); };
+    });
+  }
+  $('#p_files').onchange = async e => {
+    const files = [...e.target.files]; e.target.value = '';
+    for (const [n, f] of files.entries()) {
+      try {
+        const { dataUrl } = await compress(f);
+        const path = `images/projects/${draft.id}-${Date.now()}-${n}.jpg`;
+        stage(path, dataUrl); draft.images.push(path);
+      } catch (ex) { toast(ex.message, 'bad'); }
+    }
+    renderImgs();
+  };
+
+  /* map picker */
+  function setLoc(lat, lng, pan = true) {
+    lat = +(+lat).toFixed(6); lng = +(+lng).toFixed(6);
+    $('#p_lat').value = lat; $('#p_lng').value = lng;
+    if (!map) return;
+    if (!marker) { marker = L.marker([lat, lng], { draggable: true }).addTo(map); marker.on('dragend', () => { const p = marker.getLatLng(); setLoc(p.lat, p.lng, false); }); }
+    else marker.setLatLng([lat, lng]);
+    if (pan) map.setView([lat, lng], Math.max(map.getZoom(), 15));
+  }
+  function initMap() {
+    if (map) { map.remove(); map = null; marker = null; }
+    const lat = parseFloat($('#p_lat').value), lng = parseFloat($('#p_lng').value);
+    const has = isFinite(lat) && isFinite(lng);
+    map = L.map('p_map').setView(has ? [lat, lng] : [24.7136, 46.6753], has ? 15 : 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+    if (has) setLoc(lat, lng, false);
+    map.on('click', e => setLoc(e.latlng.lat, e.latlng.lng, false));
+    setTimeout(() => map.invalidateSize(), 100);
+  }
+  ['p_lat', 'p_lng'].forEach(id => $('#' + id).addEventListener('change', () => { const a = parseFloat($('#p_lat').value), b = parseFloat($('#p_lng').value); if (isFinite(a) && isFinite(b)) setLoc(a, b); }));
+  $('#p_searchBtn').onclick = async () => {
+    const q = $('#p_search').value.trim(); if (!q) return;
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=ar&countrycodes=sa&q=${encodeURIComponent(q)}`);
+      const j = await r.json();
+      if (!j.length) return toast('لم يتم العثور على نتيجة. جرّب اسمًا آخر أو حدّد الموقع يدويًا على الخريطة.', 'bad');
+      setLoc(j[0].lat, j[0].lon);
+    } catch { toast('تعذّر البحث الآن. حدّد الموقع يدويًا على الخريطة.', 'bad'); }
+  };
+  $('#p_search').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#p_searchBtn').click(); } });
+  $('#p_linkBtn').onclick = () => {
+    const u = $('#p_link').value.trim();
+    const m = u.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) || u.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/) || u.match(/[?&](?:q|ll|query|destination)=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (m) { setLoc(m[1], m[2]); $('#p_maps').value = u; toast('تم استخراج الإحداثيات', 'ok'); }
+    else toast('الرابط المختصر لا يحتوي إحداثيات. افتحه في المتصفح وانسخ الرابط الكامل، أو اضغط على الخريطة لتحديد الموقع.', 'bad');
+  };
+
+  $('#pForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const g = id => $('#' + id).value.trim();
+    Object.assign(draft, { title: g('p_title'), status: g('p_status'), type: g('p_type'), city: g('p_city'), year: g('p_year'), description: g('p_desc'), mapsUrl: g('p_maps') });
+    const lat = parseFloat(g('p_lat')), lng = parseFloat(g('p_lng'));
+    draft.lat = isFinite(lat) ? lat : ''; draft.lng = isFinite(lng) ? lng : '';
+    if (S.editing == null) S.data.projects.unshift(draft); else S.data.projects[S.editing] = draft;
+    closeProject(); renderProjects(); setDirty(true); toast('تم حفظ المشروع مؤقتًا. اضغط «حفظ ونشر» لنشره على الموقع.', 'ok');
+  });
+  $('#p_delete').onclick = () => {
+    if (!confirm('حذف هذا المشروع نهائيًا من الموقع؟')) return;
+    S.data.projects.splice(S.editing, 1); closeProject(); renderProjects(); setDirty(true);
+  };
+
+  /* ---------- save to GitHub ---------- */
+  async function save() {
+    const btn = $('#saveBtn'); btn.disabled = true;
+    try {
+      // ملاحظة: نحتفظ فقط بالصور المستخدمة فعليًا
+      const used = new Set([...(S.data.projects || []).flatMap(p => p.images || []), S.data.hero?.image].filter(Boolean));
+      const todo = [...S.pending].filter(p => used.has(p));
+      let n = 0;
+      for (const path of todo) {
+        btn.textContent = `رفع الصور ${++n}/${todo.length}...`;
+        const base64 = S.previews[path].split(',')[1];
+        await gh(path, { method: 'PUT', body: { message: `إضافة صورة ${path}`, content: base64, branch: S.cfg.branch } });
+        S.pending.delete(path);
+      }
+      S.pending.clear();
+      btn.textContent = 'حفظ البيانات...';
+      const r = await gh(CONTENT_PATH, { method: 'PUT', body: { message: 'تحديث محتوى الموقع من لوحة التحكم', content: b64utf8(JSON.stringify(S.data, null, 2) + '\n'), sha: S.sha, branch: S.cfg.branch } });
+      S.sha = r.content.sha; setDirty(false);
+      toast('تم الحفظ. سيظهر التحديث على الموقع خلال دقيقة تقريبًا.', 'ok');
+      renderProjects();
+    } catch (ex) { toast('تعذّر الحفظ: ' + errMsg(ex), 'bad'); }
+    btn.disabled = false; btn.textContent = 'حفظ ونشر';
+  }
+})();
+
+</script>
+</body>
+</html>
